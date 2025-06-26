@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notas Académicas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Notas Académicas</h1>
+        </header>
+        
+        <main>
+            <div class="course-section">
+                <div class="course-header">
+                    <input type="text" id="courseName" placeholder="Nombre del curso" class="course-name-input">
+                    <button id="addCourse" class="btn btn-primary">Agregar Curso</button>
+                </div>
+                
+                <div id="coursesContainer" class="courses-container">
+                    <!-- Los cursos se agregarán dinámicamente aquí -->
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <h2>Resumen General</h2>
+                <div id="overallSummary" class="summary-container">
+                    <!-- El resumen se generará dinámicamente -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
