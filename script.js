@@ -2,8 +2,266 @@ class GradeCalculator {
     constructor() {
         this.courses = [];
         this.courseIdCounter = 0;
+        this.currentUser = null;
+        this.initializeLoginListeners();
+        this.checkSession();
+    }
+
+    // Métodos para manejar localStorage
+    saveToLocalStorage() {
+        if (this.currentUser) {
+            const userData = {
+                username: this.currentUser,
+                courses: this.courses,
+                courseIdCounter: this.courseIdCounter
+            };
+            localStorage.setItem(`gradeCalc_${this.currentUser}`, JSON.stringify(userData));
+        }
+    }
+
+    loadFromLocalStorage() {
+        if (this.currentUser) {
+            const saved = localStorage.getItem(`gradeCalc_${this.currentUser}`);
+            if (saved) {
+                const userData = JSON.parse(saved);
+                this.courses = userData.courses || [];
+                this.courseIdCounter = userData.courseIdCounter || 0;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    getUsers() {
+        const users = localStorage.getItem('gradeCalc_users');
+        return users ? JSON.parse(users) : {};
+    }
+
+    saveUser(username, password) {
+        const users = this.getUsers();
+        users[username] = { password: password };
+        localStorage.setItem('gradeCalc_users', JSON.stringify(users));
+    }
+
+    validateUser(username, password) {
+        const users = this.getUsers();
+        return users[username] && users[username].password === password;
+    }
+
+    userExists(username) {
+        const users = this.getUsers();
+        return users.hasOwnProperty(username);
+    }
+
+    // Métodos de autenticación
+    initializeLoginListeners() {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Listener para login
+            const loginButton = document.getElementById('loginButton');
+            if (loginButton) {
+                loginButton.addEventListener('click', () => this.handleLogin());
+            }
+
+            // Listener para registro
+            const registerButton = document.getElementById('registerButton');
+            if (registerButton) {
+                registerButton.addEventListener('click', () => this.handleRegister());
+            }
+
+            // Listener para guardar
+            const saveButton = document.getElementById('saveButton');
+            if (saveButton) {
+                saveButton.addEventListener('click', () => this.handleSave());
+            }
+
+            // Listener para logout
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => this.handleLogout());
+            }
+
+            // Enter key en campos de login
+            const loginPassword = document.getElementById('loginPassword');
+            if (loginPassword) {
+                loginPassword.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleLogin();
+                });
+            }
+
+            const confirmPassword = document.getElementById('confirmPassword');
+            if (confirmPassword) {
+                confirmPassword.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleRegister();
+                });
+            }
+        });
+    }
+
+    checkSession() {
+        // Inicializar usuarios demo si no existen
+        this.initializeDemoUsers();
+        
+        const savedUser = localStorage.getItem('gradeCalc_currentUser');
+        if (savedUser) {
+            this.currentUser = savedUser;
+            this.showMainApp();
+            this.loadUserData();
+        } else {
+            this.showLoginScreen();
+        }
+    }
+
+    initializeDemoUsers() {
+        const users = this.getUsers();
+        
+        // Si no existe el usuario demo, crearlo
+        if (!users['demo']) {
+            users['demo'] = { password: 'demo123' };
+            localStorage.setItem('gradeCalc_users', JSON.stringify(users));
+        }
+        
+        // Si no existe el usuario admin, crearlo
+        if (!users['admin']) {
+            users['admin'] = { password: 'admin123' };
+            localStorage.setItem('gradeCalc_users', JSON.stringify(users));
+        }
+    }
+
+    handleLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!username || !password) {
+            alert('Por favor, complete todos los campos');
+            return;
+        }
+
+        if (this.validateUser(username, password)) {
+            this.currentUser = username;
+            localStorage.setItem('gradeCalc_currentUser', username);
+            this.showMainApp();
+            this.loadUserData();
+        } else {
+            alert('Credenciales inválidas');
+        }
+    }
+
+    handleRegister() {
+        const username = document.getElementById('registerUsername').value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!username || !password || !confirmPassword) {
+            alert('Por favor, complete todos los campos');
+            return;
+        }
+
+        // Validar credenciales prohibidas
+        if (username.toLowerCase() === 'demo' && password === 'demo123') {
+            alert('No puede registrarse con las credenciales demo/demo123. Por favor, elija otras credenciales.');
+            return;
+        }
+
+        // Validar usuario demo
+        if (username.toLowerCase() === 'demo') {
+            alert('El nombre de usuario "demo" está reservado. Por favor, elija otro nombre de usuario.');
+            return;
+        }
+
+        // Validar contraseña demo123
+        if (password === 'demo123') {
+            alert('La contraseña "demo123" está reservada. Por favor, elija otra contraseña.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
+        // Validar longitud mínima de contraseña
+        if (password.length < 6) {
+            alert('La contraseña debe tener al menos 6 caracteres');
+            return;
+        }
+
+        // Validar longitud mínima de usuario
+        if (username.length < 3) {
+            alert('El nombre de usuario debe tener al menos 3 caracteres');
+            return;
+        }
+
+        if (this.userExists(username)) {
+            alert('El usuario ya existe');
+            return;
+        }
+
+        this.saveUser(username, password);
+        alert('Usuario registrado correctamente');
+        
+        // Cambiar a tab de login
+        this.switchTab('login');
+        
+        // Limpiar campos
+        document.getElementById('registerUsername').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }
+
+    handleSave() {
+        this.saveToLocalStorage();
+        alert('Datos guardados correctamente');
+    }
+
+    handleLogout() {
+        if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+            localStorage.removeItem('gradeCalc_currentUser');
+            this.currentUser = null;
+            this.courses = [];
+            this.courseIdCounter = 0;
+            this.showLoginScreen();
+        }
+    }
+
+    showLoginScreen() {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+
+    showMainApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('welcomeMessage').textContent = `Bienvenido, ${this.currentUser}`;
         this.initializeEventListeners();
-        this.loadDefaultCourses();
+    }
+
+    loadUserData() {
+        if (this.loadFromLocalStorage()) {
+            this.renderAllCourses();
+        } else {
+            // Si no hay datos guardados, cargar cursos por defecto
+            this.loadDefaultCourses();
+        }
+        this.updateSummary();
+    }
+
+    switchTab(tab) {
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        if (tab === 'login') {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+        } else {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.classList.add('active');
+            loginForm.classList.remove('active');
+        }
     }
 
     loadDefaultCourses() {
@@ -611,4 +869,9 @@ const calculator = new GradeCalculator();
 
 // Hacer disponible globalmente para los event handlers inline
 window.calculator = calculator;
+
+// Función global para el cambio de tabs (llamada desde HTML)
+window.switchTab = function(tab) {
+    calculator.switchTab(tab);
+};
 

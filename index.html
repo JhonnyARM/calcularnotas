@@ -7,9 +7,66 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <header class="login-header">
+                <h1>📚 Calculadora de Notas Académicas</h1>
+                <p>Inicia sesión para acceder a tus cursos</p>
+            </header>
+            
+            <div class="login-form">
+                <div class="form-tabs">
+                    <button id="loginTab" class="tab-button active" onclick="switchTab('login')">Iniciar Sesión</button>
+                    <button id="registerTab" class="tab-button" onclick="switchTab('register')">Registrarse</button>
+                </div>
+                
+                <div id="loginForm" class="tab-content active">
+                    <div class="input-group">
+                        <label for="loginUsername">Usuario:</label>
+                        <input type="text" id="loginUsername" placeholder="Ingrese su usuario">
+                    </div>
+                    <div class="input-group">
+                        <label for="loginPassword">Contraseña:</label>
+                        <input type="password" id="loginPassword" placeholder="Ingrese su contraseña">
+                    </div>
+                    <button id="loginButton" class="btn btn-primary btn-full">Iniciar Sesión</button>
+                </div>
+                
+                <div id="registerForm" class="tab-content">
+                    <div class="input-group">
+                        <label for="registerUsername">Usuario:</label>
+                        <input type="text" id="registerUsername" placeholder="Elija un nombre de usuario (mín. 3 caracteres)">
+                    </div>
+                    <div class="input-group">
+                        <label for="registerPassword">Contraseña:</label>
+                        <input type="password" id="registerPassword" placeholder="Elija una contraseña (mín. 6 caracteres)">
+                    </div>
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirmar Contraseña:</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirme su contraseña">
+                    </div>
+                    <button id="registerButton" class="btn btn-primary btn-full">Registrarse</button>
+                    
+                    <div class="demo-info">
+                        <p><strong>Nota:</strong> No puede registrarse con el usuario "demo" o la contraseña "demo123" ya que están reservados para el sistema de demostración.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="container" style="display: none;">
         <header>
-            <h1>Calculadora de Notas Académicas</h1>
+            <div class="app-header">
+                <h1>Calculadora de Notas Académicas</h1>
+                <div class="user-info">
+                    <span id="welcomeMessage">Bienvenido, Usuario</span>
+                    <button id="saveButton" class="btn btn-secondary">💾 Guardar</button>
+                    <button id="logoutButton" class="btn btn-danger">🚪 Cerrar Sesión</button>
+                </div>
+            </div>
         </header>
         
         <main>

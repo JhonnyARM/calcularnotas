@@ -1,0 +1,51 @@
+{
+  "users": {
+    "demo": {
+      "username": "demo",
+      "password": "demo123",
+      "courses": [
+        {
+          "id": 0,
+          "name": "Taller de Tesis",
+          "units": [
+            {
+              "id": 1640995200000,
+              "name": "Unidad 1",
+              "weight": 30,
+              "components": [
+                { "id": 1640995200001, "name": "Componente 1", "weight": 0.1, "grade": 0 },
+                { "id": 1640995200002, "name": "Componente 2", "weight": 0.1, "grade": 0 },
+                { "id": 1640995200003, "name": "Componente 3", "weight": 0.35, "grade": 0 },
+                { "id": 1640995200004, "name": "Componente 4", "weight": 0.3, "grade": 0 },
+                { "id": 1640995200005, "name": "Componente 5", "weight": 0.15, "grade": 0 }
+              ]
+            },
+            {
+              "id": 1640995200010,
+              "name": "Unidad 2",
+              "weight": 35,
+              "components": [
+                { "id": 1640995200011, "name": "Componente 1", "weight": 0.1, "grade": 0 },
+                { "id": 1640995200012, "name": "Componente 2", "weight": 0.25, "grade": 0 },
+                { "id": 1640995200013, "name": "Componente 3", "weight": 0.3, "grade": 0 },
+                { "id": 1640995200014, "name": "Componente 4", "weight": 0.35, "grade": 0 }
+              ]
+            },
+            {
+              "id": 1640995200020,
+              "name": "Unidad 3",
+              "weight": 35,
+              "components": []
+            }
+          ]
+        }
+      ]
+    },
+    "admin": {
+      "username": "admin",
+      "password": "admin123",
+      "courses": []
+    }
+  }
+}
+
